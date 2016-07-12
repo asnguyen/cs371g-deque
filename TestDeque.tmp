@@ -1,16 +1,16 @@
-==22157== Memcheck, a memory error detector
-==22157== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
-==22157== Using Valgrind-3.10.1 and LibVEX; rerun with -h for copyright info
-==22157== Command: ./TestDeque
-==22157== 
+==23749== Memcheck, a memory error detector
+==23749== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
+==23749== Using Valgrind-3.10.1 and LibVEX; rerun with -h for copyright info
+==23749== Command: ./TestDeque
+==23749== 
 Running main() from gtest_main.cc
 [==========] Running 134 tests from 2 test cases.
 [----------] Global test environment set-up.
 [----------] 67 tests from Deque_Fixture/0, where TypeParam = std::deque<int, std::allocator<int> >
 [ RUN      ] Deque_Fixture/0.test_1
-[       OK ] Deque_Fixture/0.test_1 (18 ms)
+[       OK ] Deque_Fixture/0.test_1 (16 ms)
 [ RUN      ] Deque_Fixture/0.equal_1
-[       OK ] Deque_Fixture/0.equal_1 (10 ms)
+[       OK ] Deque_Fixture/0.equal_1 (11 ms)
 [ RUN      ] Deque_Fixture/0.equal_2
 [       OK ] Deque_Fixture/0.equal_2 (3 ms)
 [ RUN      ] Deque_Fixture/0.equal_3
@@ -24,7 +24,7 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/0.less_than_4
 [       OK ] Deque_Fixture/0.less_than_4 (3 ms)
 [ RUN      ] Deque_Fixture/0.iterator_equal_1
-[       OK ] Deque_Fixture/0.iterator_equal_1 (3 ms)
+[       OK ] Deque_Fixture/0.iterator_equal_1 (2 ms)
 [ RUN      ] Deque_Fixture/0.iterator_equal_2
 [       OK ] Deque_Fixture/0.iterator_equal_2 (4 ms)
 [ RUN      ] Deque_Fixture/0.iterator_plus_plus_1
@@ -38,11 +38,11 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/0.iterator_plus_equal_1
 [       OK ] Deque_Fixture/0.iterator_plus_equal_1 (3 ms)
 [ RUN      ] Deque_Fixture/0.iterator_plus_equal_2
-[       OK ] Deque_Fixture/0.iterator_plus_equal_2 (4 ms)
+[       OK ] Deque_Fixture/0.iterator_plus_equal_2 (3 ms)
 [ RUN      ] Deque_Fixture/0.iterator_minus_equal_1
 [       OK ] Deque_Fixture/0.iterator_minus_equal_1 (2 ms)
 [ RUN      ] Deque_Fixture/0.iterator_minus_equal_2
-[       OK ] Deque_Fixture/0.iterator_minus_equal_2 (3 ms)
+[       OK ] Deque_Fixture/0.iterator_minus_equal_2 (4 ms)
 [ RUN      ] Deque_Fixture/0.iterator_star_1
 [       OK ] Deque_Fixture/0.iterator_star_1 (3 ms)
 [ RUN      ] Deque_Fixture/0.iterator_star_2
@@ -50,11 +50,11 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/0.iterator_star_3
 [       OK ] Deque_Fixture/0.iterator_star_3 (2 ms)
 [ RUN      ] Deque_Fixture/0.iterator_star_4
-[       OK ] Deque_Fixture/0.iterator_star_4 (3 ms)
+[       OK ] Deque_Fixture/0.iterator_star_4 (2 ms)
 [ RUN      ] Deque_Fixture/0.iterator_star_5
 [       OK ] Deque_Fixture/0.iterator_star_5 (2 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_equal_1
-[       OK ] Deque_Fixture/0.const_iterator_equal_1 (3 ms)
+[       OK ] Deque_Fixture/0.const_iterator_equal_1 (2 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_equal_2
 [       OK ] Deque_Fixture/0.const_iterator_equal_2 (3 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_plus_plus_1
@@ -62,9 +62,9 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/0.const_iterator_plus_plus_2
 [       OK ] Deque_Fixture/0.const_iterator_plus_plus_2 (2 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_minus_minus_1
-[       OK ] Deque_Fixture/0.const_iterator_minus_minus_1 (2 ms)
+[       OK ] Deque_Fixture/0.const_iterator_minus_minus_1 (3 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_minus_minus_2
-[       OK ] Deque_Fixture/0.const_iterator_minus_minus_2 (3 ms)
+[       OK ] Deque_Fixture/0.const_iterator_minus_minus_2 (2 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_plus_equal_1
 [       OK ] Deque_Fixture/0.const_iterator_plus_equal_1 (3 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_plus_equal_2
@@ -74,19 +74,19 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/0.const_iterator_minus_equal_2
 [       OK ] Deque_Fixture/0.const_iterator_minus_equal_2 (3 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_star_1
-[       OK ] Deque_Fixture/0.const_iterator_star_1 (3 ms)
+[       OK ] Deque_Fixture/0.const_iterator_star_1 (2 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_star_2
 [       OK ] Deque_Fixture/0.const_iterator_star_2 (2 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_star_3
-[       OK ] Deque_Fixture/0.const_iterator_star_3 (3 ms)
+[       OK ] Deque_Fixture/0.const_iterator_star_3 (2 ms)
 [ RUN      ] Deque_Fixture/0.const_iterator_star_4
-[       OK ] Deque_Fixture/0.const_iterator_star_4 (2 ms)
+[       OK ] Deque_Fixture/0.const_iterator_star_4 (3 ms)
 [ RUN      ] Deque_Fixture/0.copy_constructor
-[       OK ] Deque_Fixture/0.copy_constructor (9 ms)
+[       OK ] Deque_Fixture/0.copy_constructor (8 ms)
 [ RUN      ] Deque_Fixture/0.copy_assignment
 [       OK ] Deque_Fixture/0.copy_assignment (2 ms)
 [ RUN      ] Deque_Fixture/0.index_1
-[       OK ] Deque_Fixture/0.index_1 (3 ms)
+[       OK ] Deque_Fixture/0.index_1 (4 ms)
 [ RUN      ] Deque_Fixture/0.index_2
 [       OK ] Deque_Fixture/0.index_2 (2 ms)
 [ RUN      ] Deque_Fixture/0.index_3
@@ -96,17 +96,17 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/0.const_index_2
 [       OK ] Deque_Fixture/0.const_index_2 (2 ms)
 [ RUN      ] Deque_Fixture/0._at_1
-[       OK ] Deque_Fixture/0._at_1 (3 ms)
+[       OK ] Deque_Fixture/0._at_1 (2 ms)
 [ RUN      ] Deque_Fixture/0._at_2
 [       OK ] Deque_Fixture/0._at_2 (2 ms)
 [ RUN      ] Deque_Fixture/0.at_3
-[       OK ] Deque_Fixture/0.at_3 (2 ms)
+[       OK ] Deque_Fixture/0.at_3 (3 ms)
 [ RUN      ] Deque_Fixture/0.const_at_1
-[       OK ] Deque_Fixture/0.const_at_1 (3 ms)
+[       OK ] Deque_Fixture/0.const_at_1 (2 ms)
 [ RUN      ] Deque_Fixture/0.const_at_2
 [       OK ] Deque_Fixture/0.const_at_2 (2 ms)
 [ RUN      ] Deque_Fixture/0.at_4
-[       OK ] Deque_Fixture/0.at_4 (39 ms)
+[       OK ] Deque_Fixture/0.at_4 (37 ms)
 [ RUN      ] Deque_Fixture/0.back_1
 [       OK ] Deque_Fixture/0.back_1 (2 ms)
 [ RUN      ] Deque_Fixture/0.back_2
@@ -118,36 +118,36 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/0.front_2
 [       OK ] Deque_Fixture/0.front_2 (3 ms)
 [ RUN      ] Deque_Fixture/0.front_3
-[       OK ] Deque_Fixture/0.front_3 (3 ms)
+[       OK ] Deque_Fixture/0.front_3 (2 ms)
 [ RUN      ] Deque_Fixture/0.erase
 [       OK ] Deque_Fixture/0.erase (9 ms)
 [ RUN      ] Deque_Fixture/0.insert_1
-[       OK ] Deque_Fixture/0.insert_1 (10 ms)
+[       OK ] Deque_Fixture/0.insert_1 (9 ms)
 [ RUN      ] Deque_Fixture/0.insert_2
-[       OK ] Deque_Fixture/0.insert_2 (2 ms)
+[       OK ] Deque_Fixture/0.insert_2 (3 ms)
 [ RUN      ] Deque_Fixture/0.pop_back
 [       OK ] Deque_Fixture/0.pop_back (3 ms)
 [ RUN      ] Deque_Fixture/0.pop_front
 [       OK ] Deque_Fixture/0.pop_front (2 ms)
 [ RUN      ] Deque_Fixture/0.push_front
-[       OK ] Deque_Fixture/0.push_front (2 ms)
+[       OK ] Deque_Fixture/0.push_front (3 ms)
 [ RUN      ] Deque_Fixture/0.push_back
 [       OK ] Deque_Fixture/0.push_back (3 ms)
 [ RUN      ] Deque_Fixture/0.resize_1
-[       OK ] Deque_Fixture/0.resize_1 (8 ms)
+[       OK ] Deque_Fixture/0.resize_1 (7 ms)
 [ RUN      ] Deque_Fixture/0.resize_2
-[       OK ] Deque_Fixture/0.resize_2 (2 ms)
+[       OK ] Deque_Fixture/0.resize_2 (3 ms)
 [ RUN      ] Deque_Fixture/0.resize_3
 [       OK ] Deque_Fixture/0.resize_3 (3 ms)
 [ RUN      ] Deque_Fixture/0.size
-[       OK ] Deque_Fixture/0.size (2 ms)
-[----------] 67 tests from Deque_Fixture/0 (288 ms total)
+[       OK ] Deque_Fixture/0.size (1 ms)
+[----------] 67 tests from Deque_Fixture/0 (277 ms total)
 
 [----------] 67 tests from Deque_Fixture/1, where TypeParam = my_deque<int, std::allocator<int> >
 [ RUN      ] Deque_Fixture/1.test_1
 [       OK ] Deque_Fixture/1.test_1 (5 ms)
 [ RUN      ] Deque_Fixture/1.equal_1
-[       OK ] Deque_Fixture/1.equal_1 (17 ms)
+[       OK ] Deque_Fixture/1.equal_1 (16 ms)
 [ RUN      ] Deque_Fixture/1.equal_2
 [       OK ] Deque_Fixture/1.equal_2 (3 ms)
 [ RUN      ] Deque_Fixture/1.equal_3
@@ -157,21 +157,21 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/1.less_than_2
 [       OK ] Deque_Fixture/1.less_than_2 (3 ms)
 [ RUN      ] Deque_Fixture/1.less_than_3
-[       OK ] Deque_Fixture/1.less_than_3 (7 ms)
+[       OK ] Deque_Fixture/1.less_than_3 (8 ms)
 [ RUN      ] Deque_Fixture/1.less_than_4
 [       OK ] Deque_Fixture/1.less_than_4 (3 ms)
 [ RUN      ] Deque_Fixture/1.iterator_equal_1
-[       OK ] Deque_Fixture/1.iterator_equal_1 (3 ms)
+[       OK ] Deque_Fixture/1.iterator_equal_1 (2 ms)
 [ RUN      ] Deque_Fixture/1.iterator_equal_2
 [       OK ] Deque_Fixture/1.iterator_equal_2 (3 ms)
 [ RUN      ] Deque_Fixture/1.iterator_plus_plus_1
 [       OK ] Deque_Fixture/1.iterator_plus_plus_1 (3 ms)
 [ RUN      ] Deque_Fixture/1.iterator_plus_plus_2
-[       OK ] Deque_Fixture/1.iterator_plus_plus_2 (2 ms)
+[       OK ] Deque_Fixture/1.iterator_plus_plus_2 (3 ms)
 [ RUN      ] Deque_Fixture/1.iterator_minus_minus_1
 [       OK ] Deque_Fixture/1.iterator_minus_minus_1 (4 ms)
 [ RUN      ] Deque_Fixture/1.iterator_minus_minus_2
-[       OK ] Deque_Fixture/1.iterator_minus_minus_2 (3 ms)
+[       OK ] Deque_Fixture/1.iterator_minus_minus_2 (2 ms)
 [ RUN      ] Deque_Fixture/1.iterator_plus_equal_1
 [       OK ] Deque_Fixture/1.iterator_plus_equal_1 (3 ms)
 [ RUN      ] Deque_Fixture/1.iterator_plus_equal_2
@@ -181,17 +181,17 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/1.iterator_minus_equal_2
 [       OK ] Deque_Fixture/1.iterator_minus_equal_2 (3 ms)
 [ RUN      ] Deque_Fixture/1.iterator_star_1
-[       OK ] Deque_Fixture/1.iterator_star_1 (2 ms)
+[       OK ] Deque_Fixture/1.iterator_star_1 (3 ms)
 [ RUN      ] Deque_Fixture/1.iterator_star_2
-[       OK ] Deque_Fixture/1.iterator_star_2 (3 ms)
+[       OK ] Deque_Fixture/1.iterator_star_2 (2 ms)
 [ RUN      ] Deque_Fixture/1.iterator_star_3
 [       OK ] Deque_Fixture/1.iterator_star_3 (2 ms)
 [ RUN      ] Deque_Fixture/1.iterator_star_4
-[       OK ] Deque_Fixture/1.iterator_star_4 (2 ms)
+[       OK ] Deque_Fixture/1.iterator_star_4 (3 ms)
 [ RUN      ] Deque_Fixture/1.iterator_star_5
 [       OK ] Deque_Fixture/1.iterator_star_5 (2 ms)
 [ RUN      ] Deque_Fixture/1.const_iterator_equal_1
-[       OK ] Deque_Fixture/1.const_iterator_equal_1 (3 ms)
+[       OK ] Deque_Fixture/1.const_iterator_equal_1 (2 ms)
 [ RUN      ] Deque_Fixture/1.const_iterator_equal_2
 [       OK ] Deque_Fixture/1.const_iterator_equal_2 (3 ms)
 [ RUN      ] Deque_Fixture/1.const_iterator_plus_plus_1
@@ -199,7 +199,7 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/1.const_iterator_plus_plus_2
 [       OK ] Deque_Fixture/1.const_iterator_plus_plus_2 (3 ms)
 [ RUN      ] Deque_Fixture/1.const_iterator_minus_minus_1
-[       OK ] Deque_Fixture/1.const_iterator_minus_minus_1 (4 ms)
+[       OK ] Deque_Fixture/1.const_iterator_minus_minus_1 (3 ms)
 [ RUN      ] Deque_Fixture/1.const_iterator_minus_minus_2
 [       OK ] Deque_Fixture/1.const_iterator_minus_minus_2 (3 ms)
 [ RUN      ] Deque_Fixture/1.const_iterator_plus_equal_1
@@ -215,25 +215,25 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/1.const_iterator_star_2
 [       OK ] Deque_Fixture/1.const_iterator_star_2 (2 ms)
 [ RUN      ] Deque_Fixture/1.const_iterator_star_3
-[       OK ] Deque_Fixture/1.const_iterator_star_3 (3 ms)
+[       OK ] Deque_Fixture/1.const_iterator_star_3 (2 ms)
 [ RUN      ] Deque_Fixture/1.const_iterator_star_4
-[       OK ] Deque_Fixture/1.const_iterator_star_4 (2 ms)
+[       OK ] Deque_Fixture/1.const_iterator_star_4 (3 ms)
 [ RUN      ] Deque_Fixture/1.copy_constructor
-[       OK ] Deque_Fixture/1.copy_constructor (5 ms)
+[       OK ] Deque_Fixture/1.copy_constructor (4 ms)
 [ RUN      ] Deque_Fixture/1.copy_assignment
 [       OK ] Deque_Fixture/1.copy_assignment (2 ms)
 [ RUN      ] Deque_Fixture/1.index_1
-[       OK ] Deque_Fixture/1.index_1 (2 ms)
+[       OK ] Deque_Fixture/1.index_1 (3 ms)
 [ RUN      ] Deque_Fixture/1.index_2
 [       OK ] Deque_Fixture/1.index_2 (2 ms)
 [ RUN      ] Deque_Fixture/1.index_3
-[       OK ] Deque_Fixture/1.index_3 (2 ms)
+[       OK ] Deque_Fixture/1.index_3 (3 ms)
 [ RUN      ] Deque_Fixture/1.const_index_1
 [       OK ] Deque_Fixture/1.const_index_1 (3 ms)
 [ RUN      ] Deque_Fixture/1.const_index_2
-[       OK ] Deque_Fixture/1.const_index_2 (3 ms)
+[       OK ] Deque_Fixture/1.const_index_2 (2 ms)
 [ RUN      ] Deque_Fixture/1._at_1
-[       OK ] Deque_Fixture/1._at_1 (2 ms)
+[       OK ] Deque_Fixture/1._at_1 (3 ms)
 [ RUN      ] Deque_Fixture/1._at_2
 [       OK ] Deque_Fixture/1._at_2 (2 ms)
 [ RUN      ] Deque_Fixture/1.at_3
@@ -247,15 +247,15 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/1.back_1
 [       OK ] Deque_Fixture/1.back_1 (2 ms)
 [ RUN      ] Deque_Fixture/1.back_2
-[       OK ] Deque_Fixture/1.back_2 (3 ms)
+[       OK ] Deque_Fixture/1.back_2 (2 ms)
 [ RUN      ] Deque_Fixture/1.back_3
-[       OK ] Deque_Fixture/1.back_3 (2 ms)
+[       OK ] Deque_Fixture/1.back_3 (3 ms)
 [ RUN      ] Deque_Fixture/1.front_1
-[       OK ] Deque_Fixture/1.front_1 (3 ms)
+[       OK ] Deque_Fixture/1.front_1 (2 ms)
 [ RUN      ] Deque_Fixture/1.front_2
 [       OK ] Deque_Fixture/1.front_2 (2 ms)
 [ RUN      ] Deque_Fixture/1.front_3
-[       OK ] Deque_Fixture/1.front_3 (3 ms)
+[       OK ] Deque_Fixture/1.front_3 (2 ms)
 [ RUN      ] Deque_Fixture/1.erase
 [       OK ] Deque_Fixture/1.erase (5 ms)
 [ RUN      ] Deque_Fixture/1.insert_1
@@ -267,9 +267,9 @@ Running main() from gtest_main.cc
 [ RUN      ] Deque_Fixture/1.pop_front
 [       OK ] Deque_Fixture/1.pop_front (3 ms)
 [ RUN      ] Deque_Fixture/1.push_front
-[       OK ] Deque_Fixture/1.push_front (3 ms)
+[       OK ] Deque_Fixture/1.push_front (2 ms)
 [ RUN      ] Deque_Fixture/1.push_back
-[       OK ] Deque_Fixture/1.push_back (3 ms)
+[       OK ] Deque_Fixture/1.push_back (2 ms)
 [ RUN      ] Deque_Fixture/1.resize_1
 [       OK ] Deque_Fixture/1.resize_1 (3 ms)
 [ RUN      ] Deque_Fixture/1.resize_2
@@ -278,24 +278,17 @@ Running main() from gtest_main.cc
 [       OK ] Deque_Fixture/1.resize_3 (3 ms)
 [ RUN      ] Deque_Fixture/1.size
 [       OK ] Deque_Fixture/1.size (2 ms)
-[----------] 67 tests from Deque_Fixture/1 (214 ms total)
+[----------] 67 tests from Deque_Fixture/1 (207 ms total)
 
 [----------] Global test environment tear-down
-[==========] 134 tests from 2 test cases ran. (523 ms total)
+[==========] 134 tests from 2 test cases ran. (505 ms total)
 [  PASSED  ] 134 tests.
-==22157== 
-==22157== HEAP SUMMARY:
-==22157==     in use at exit: 0 bytes in 0 blocks
-==22157==   total heap usage: 4,314 allocs, 4,314 frees, 491,159 bytes allocated
-==22157== 
-==22157== All heap blocks were freed -- no leaks are possible
-==22157== 
-==22157== For counts of detected and suppressed errors, rerun with: -v
-==22157== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
-File 'TestDeque.c++'
-Lines executed:99.70% of 333
-Branches executed:65.56% of 3380
-Taken at least once:32.78% of 3380
-Calls executed:51.17% of 3983
-Creating 'TestDeque.c++.gcov'
-
+==23749== 
+==23749== HEAP SUMMARY:
+==23749==     in use at exit: 0 bytes in 0 blocks
+==23749==   total heap usage: 4,314 allocs, 4,314 frees, 491,156 bytes allocated
+==23749== 
+==23749== All heap blocks were freed -- no leaks are possible
+==23749== 
+==23749== For counts of detected and suppressed errors, rerun with: -v
+==23749== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

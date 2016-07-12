@@ -97,7 +97,6 @@ class my_deque {
         typedef typename allocator_type::const_reference    const_reference;
 
         typedef typename allocator_type::template rebind<pointer>::other B;
-        //const size_type inner_size = 10;    //the size of the "inner arrays"
 
     public:
         // -----------
@@ -106,6 +105,8 @@ class my_deque {
 
         /**
          * <your documentation>
+         checks the size of each deque first
+         if they have equal size then use std::equal to figure out which is bigger
          */
         friend bool operator == (const my_deque& lhs, const my_deque& rhs) 
         {
@@ -121,6 +122,8 @@ class my_deque {
 
         /**
          * <your documentation>
+         first judge by the size of which is bigger.
+         if they are equal then use std::lexicographical_compare to figure which is bigger
          */
         friend bool operator < (const my_deque& lhs, const my_deque& rhs) 
         {
@@ -137,18 +140,18 @@ class my_deque {
         // data
         // ----
 
-        allocator_type a;
+        allocator_type a;                           //allocator for the inner "array"
         // <your data>
-        B astar;                            //allocator
-        pointer* outer_begin;               //the very start of the "outer array"
-        pointer* outer_end;                 //the very end of the "outer array"
-        pointer* used_begin;                //the beginning of the used space in the "outer array"
-        pointer* used_end;                  //the end of the used space in the "outer array"
-        pointer data_start;                 //the start of the data in the deque
-        pointer data_end;                   //the end of the data in the deque
-        size_type deque_size;               //the size(number of elements) of the deque
-        size_type deque_capacity;           //the max number of elements that deque can store
-        const size_type static inner_size = 5;    //the size of the "inner arrays"
+        B astar;                                    //allocator for the outer "array"
+        pointer* outer_begin;                       //the very start of the "outer array"
+        pointer* outer_end;                         //the very end of the "outer array"
+        pointer* used_begin;                        //the beginning of the used space in the "outer array"
+        pointer* used_end;                          //the end of the used space in the "outer array"
+        pointer data_start;                         //the start of the data in the deque
+        pointer data_end;                           //the end of the data in the deque
+        size_type deque_size;                       //the size(number of elements) of the deque
+        size_type deque_capacity;                   //the max number of elements that deque can store
+        const size_type static inner_size = 5;      //the size of the "inner arrays"
 
 
     private:
@@ -188,6 +191,7 @@ class my_deque {
 
                 /**
                  * <your documentation>
+                 two iterators are equal if they have the same location (address)
                  */
                 friend bool operator == (const iterator& lhs, const iterator& rhs) 
                 {
@@ -262,9 +266,8 @@ class my_deque {
                     data_end(deque->data_end)
                 {
                     // <your code>
-                    outer_location = 0;                                      //starts at the first "index" of "outer array"
-                    inner_location = inner_size - (location - *outer_begin) -1; 
-                    //inner_location = (location - *outer_begin)-1;     
+                    outer_location = 0;                                         //starts at the first "index" of "outer array"
+                    inner_location = inner_size - (location - *outer_begin) -1; //finds the inner location based on its location compared to outer_begin    
                     assert(valid());
                 }
 
@@ -306,22 +309,20 @@ class my_deque {
                 iterator& operator ++ () 
                 {
                     // <your code>
-                    if(location == data_end -1)         //iterator is at the end of the used data so it has finished iteratoring through the deque
+                    if(location == data_end -1)                         //iterator is at the end of the used data so it has finished iteratoring through the deque
                     {
                         ++location;
                         return *this;
                     }
-                    if(inner_location)
+                    if(inner_location)                                  //if there is room left to move forward in the inner row
                     {
                         ++location;
                         --inner_location;
-                        //--inner_location;
                     }
-                    else
+                    else                                                //the iterator must move to the next row
                     {
-                        ++outer_location;
-                        location = *(outer_begin + outer_location);
-                        //inner_location = 0;
+                        ++outer_location;                               //moves to the next row
+                        location = *(outer_begin + outer_location);     
                         inner_location = inner_size -1;
                     }
 
@@ -348,15 +349,15 @@ class my_deque {
                 iterator& operator -- () 
                 {
                     // <your code>
-                    if(inner_size -inner_location || location == data_end)
+                    if(inner_size -inner_location || location == data_end)              //if there are still room left in the row to move back
                     {
                         --location;
-                        if(location==data_end)
+                        if(location!=data_end)                                  
                             ++inner_location;
                     }
                     else
                     {
-                        --outer_location;
+                        --outer_location;                                               //move to the prev row
                         location = *(outer_begin + outer_location) + inner_size -1;
                         inner_location =0;
 
@@ -476,7 +477,7 @@ class my_deque {
                 // ----
 
                 // <your data>
-                my_deque::iterator normal_iterator;
+                my_deque::iterator normal_iterator;                 //a const iterator contains a non const iterator
 
             private:
                 // -----
@@ -617,6 +618,10 @@ class my_deque {
 
         /**
          * <your documentation>
+         when a deque is created by default or if no size, it zeros everything. it exist in limbo until a push is called on it
+         if called with a size and/or value, a while loop will push "s" values into the deque. Push will call outer_resive which
+         will set the values for all the other data members. 
+
          */
         explicit my_deque (size_type s = 0, const_reference v = value_type(), const allocator_type& a = allocator_type()) 
         {
@@ -634,25 +639,18 @@ class my_deque {
                 push_back(v);
                 --s;
             }
-            //assert(false);
             assert(valid());
-            //assert(false);
+
         }
 
         /**
          * <your documentation>
+         the copy constructor creates act like the normal construct except 
+         it sets the the caller to the callee
          */
         my_deque (const my_deque& that) 
         {
             // <your code>
-            /*deque_capacity = that.capacity();
-            deque_size     = that.size();
-            outer_begin    = that.outer_begin;
-            outer_end      = that.outer_end;
-            used_begin     = that.used_begin;
-            used_end       = that.used_end;
-            data_end       = that.data_end;
-            data_start     = that.data_start;*/
             
             deque_capacity = 0;
             deque_size     = 0;
@@ -674,17 +672,17 @@ class my_deque {
 
         /**
          * <your documentation>
+         the destructor will first clear the caller and deallocate
+         the outer array and re-zeroing the data members
          */
         ~my_deque () 
         {
             // <your code>
             this->clear();
-            //assert(false);
             if(outer_begin != 0)
             {
                 astar.deallocate(outer_begin, outer_end - outer_begin +1);
             }
-            //assert(false);
             outer_begin = 0;
             outer_end = 0;
             used_end = 0;
@@ -694,7 +692,6 @@ class my_deque {
             deque_size = 0;
             deque_capacity = 0;
             assert(valid());
-            //assert(false);
         }
 
         // ----------
@@ -703,14 +700,12 @@ class my_deque {
 
         /**
          * <your documentation>
+         the copy assignment copys the values in rhs
+         into this.
          */
         my_deque& operator = (const my_deque& rhs) 
         {
             // <your code>
-            //my_deque that(rhs);
-            ///*this.swap(that);
-
-            //swap(that);
 
             if(this == &rhs)
                 return *this;
@@ -733,6 +728,10 @@ class my_deque {
 
         /**
          * <your documentation>
+         the index operator [] uses divide and mod to find
+         the value at [index]. using divide it find the which 
+         part of the outer element the index is in. it uses mod
+         to find which part of the inner array the index is at
          */
         reference operator [] (size_type index) 
         {
@@ -761,6 +760,8 @@ class my_deque {
 
         /**
          * <your documentation>
+         at method uses the same algorithm as operator [] but it
+         checks to see if the index is out of bounds or not. 
          */
         reference at (size_type index) 
         {
@@ -790,6 +791,8 @@ class my_deque {
 
         /**
          * <your documentation>
+         data_end is the end of last element in the deque so therefore
+         data_end -1 is the beginning of the last element
          */
         reference back () 
         {
@@ -831,6 +834,9 @@ class my_deque {
 
         /**
          * <your documentation>
+         to clear a deque, clear() starts the at the start of the 
+         data and go throug and destroy and deallocate the elements
+         until reaching the end of data
          */
         void clear () 
         {
@@ -914,6 +920,11 @@ class my_deque {
 
         /**
          * <your documentation>
+         erase starts at the pos and going to the end of the 
+         data, takes the next element and sets it to the 
+         current element. by using this alogrithm, the value
+         at pos is left out. at the end of the algorthim, we pop 
+         the last element to reduce the size
          */
         iterator erase (iterator pos) 
         {
@@ -957,6 +968,8 @@ class my_deque {
 
         /**
          * <your documentation>
+         to insert, we begin at copy of pos and sets the next value to
+         the current value. we then copy the val into the pos position
          */
         iterator insert (iterator pos, const_reference val) 
         {
@@ -988,37 +1001,26 @@ class my_deque {
         void pop_back () 
         {
             // <your code>
-            if(static_cast<size_type>(data_end != (*(used_end-1)+1)))
+            if(static_cast<size_type>(data_end != (*(used_end-1)+1)))           //if the element is not the first element in the inner array
             {
-                //assert(false);
-                a.destroy(data_end-1);
+                a.destroy(data_end-1);                                          //just simple remove it
                 --data_end;
                 --deque_size;
             }
-            else
+            else                                                                //the element that we want to remove is the fist element
             {
-                //assert(false);
-                //cout << used_end << "\n";
-                //cout << data_end << "\n";
-                //cout << *used_end << "\n";
-                //assert(false);
-                a.destroy(data_end-1);
+                a.destroy(data_end-1);                                          //we remove it
                 --deque_size;
-                //cout << used_end << "\n";
-                //cout << *used_end << "\n";
                 
-                a.deallocate(*(used_end-1),inner_size);
-                //assert(false);
-                astar.destroy(used_end);
-                if(outer_begin != outer_end)
+                a.deallocate(*(used_end-1),inner_size);                         //now we want to deallocate the inner array
+                astar.destroy(used_end);                                        //destroys the element in the outer array
+                if(outer_begin != outer_end)                                    //there are still elements in the outer array
                 {
-                    //assert(false);
                     --used_end;
                     data_end = *used_end + inner_size;
                 }
-                else
+                else                                                            //there are no elements in the outer array
                 {
-                    //assert(false);
                     used_begin = outer_begin;
                     used_begin += ((deque_capacity/inner_size)/2);
                     used_end = used_begin;
@@ -1037,24 +1039,24 @@ class my_deque {
         void pop_front () 
         {
             // <your code>
-            if(data_start != *used_begin + inner_size -1)
+            if(data_start != *used_begin + inner_size -1)               //check to see if the element is the last element in the inner array
             {
-                a.destroy(data_start);
+                a.destroy(data_start);                                  //if not, just simple destroy it
                 ++data_start;
                 --deque_size;
             }
-            else
+            else                                                        //if the element is the last element of the inner array
             {
-                a.destroy(data_start);
+                a.destroy(data_start);                                  //if so destroy it and then....
                 --deque_size;
-                a.deallocate(*used_begin,inner_size);
-                astar.destroy(used_begin);
-                if(outer_begin != outer_begin)
+                a.deallocate(*used_begin,inner_size);                   //deallocate the inner array
+                astar.destroy(used_begin);                              //destroy the element in the outer array
+                if(outer_begin != outer_begin)                          //is there elements in the outer array
                 {
                     ++used_begin;
                     data_start = *used_begin;
                 }
-                else
+                else                                                    //no? then reset the outer array
                 {
                     used_begin = outer_begin;
                     used_begin += ((deque_capacity/inner_size)/2);
@@ -1121,12 +1123,14 @@ class my_deque {
                     new_used_begin += (deque_capacity/inner_size);
                     new_used_end = new_used_begin;
 
+                    //copies the old deque into the new deque
                     for(pointer* temp_pointer = used_begin; temp_pointer < used_end;++temp_pointer)
                     {
                         astar.construct(new_used_end);
                         *new_used_end = *temp_pointer;
                         ++new_used_end;
                     }
+                    //destroys and deallocate the old deque
                     pointer* temp_begin = used_begin;
                     while(temp_begin != used_end)
                     {
@@ -1135,19 +1139,19 @@ class my_deque {
                     }
                     astar.deallocate(old_outer_begin,(old_outer_end - old_outer_begin +1));
 
+                    //resets the used_begin and used_end pointers
                     used_begin = new_used_begin;
                     used_end = new_used_end;
 
-                    if(front)
+                    if(front)                                   //if we need add something in the front
                     {
                         astar.construct(--used_begin);
                         data_start = a.allocate(inner_size);
                         *used_begin = data_start;
                         data_start+= (inner_size-1);
                     }
-                    else
+                    else                                        //if we need to add something in the back
                     {
-                        //assert(false);
                         astar.construct(used_end);
                         data_end = a.allocate(inner_size);
                         *used_end = data_end;
@@ -1171,28 +1175,27 @@ class my_deque {
         void push_back (const_reference value) 
         {
             // <your code>
-            if(used_begin == used_end)
+            if(used_begin == used_end)                      //after a resize or a fresh creation
             {
-                outer_resize(false);
+                outer_resize(false);                        //resizes the deque and create element in the back
                 a.construct(data_start, value);
             }
             else
             {
-                if(static_cast<size_type>((data_end - *(used_end -1))) < inner_size)
+                if(static_cast<size_type>((data_end - *(used_end -1))) < inner_size)        //if there is room in the row for another element
                 {
                     a.construct(data_end,value);
                     ++data_end;
                 }
                 else
                 {
-                    //assert(false);
-                    if((used_end)==(outer_end+1))
+                    if((used_end)==(outer_end+1))                       //there is no room in the deque so we have resize more space
                     {
                         outer_resize(false);
                         a.construct(data_end,value);
                         ++data_end;
                     }
-                    else
+                    else                                                //there is no room but there is unused space in the outer array
                     {
                         astar.construct(used_end);
                         data_end = a.allocate(inner_size);
@@ -1214,26 +1217,26 @@ class my_deque {
         void push_front (const_reference value) 
         {
             // <your code>
-            if(used_begin == used_end)
+            if(used_begin == used_end)                  //after a resize or a fresh creation
             {
-                outer_resize(false);
+                outer_resize(false);                    //resizes the deque and create element in the back
                 a.construct(data_start,value);
             }
             else
             {
-                if(data_start - *used_begin >= 1)
+                if(data_start - *used_begin >= 1)       //if there is room left in the row
                 {
                     --data_start;
-                    a.construct(data_start,value);
+                    a.construct(data_start,value);      //creates a new element
                 }
                 else
                 {
-                    if((used_begin == outer_begin) && (data_start == *used_begin))
+                    if((used_begin == outer_begin) && (data_start == *used_begin))      //there is no room in inner array or outer array so mus resize and create a element in the front
                     {
                         outer_resize(true);
                         a.construct(data_start, value);
                     }
-                    else
+                    else                                                                //there is no room in the inner but there is room in the outer array
                     {
                         --used_begin;
                         astar.construct(used_begin);
@@ -1258,9 +1261,9 @@ class my_deque {
         void resize (size_type s, const_reference v = value_type()) 
         {
             // <your code>
-            while(deque_size > s)
+            while(deque_size > s)       //if the desire size is smaller than the current size, we must pop the excess elements off
                 pop_back();
-            while(deque_size < s)
+            while(deque_size < s)       //if the desire size is bigger than the current size, we must push elements with value v
                 push_back(v);
             assert(valid());
         }

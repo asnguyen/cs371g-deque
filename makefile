@@ -1,15 +1,13 @@
 # http://stackoverflow.com/questions/31176997/what-does-clang-check-do-without-analyze-option
 
-FILES :=                              \
+FILES :=                            \
     Deque.h                         \
     Deque.log                       \
-    html                              \
+    html                            \
     TestDeque.c++                   \
-    TestDeque.out
-
-# uncomment these:
-#    deque-tests/EID-TestDeque.c++ \
-#    deque-tests/EID-TestDeque.out \
+    TestDeque.out					\
+	deque-tests/asn579-TestDeque.c++ \
+   	deque-tests/asn579-TestDeque.out \
 
 CXXFLAGS := -pedantic -std=c++11 -Wall
 LDFLAGS  := -lgtest -lgtest_main -pthread
