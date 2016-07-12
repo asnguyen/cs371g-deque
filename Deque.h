@@ -96,6 +96,7 @@ class my_deque {
         typedef typename allocator_type::const_reference    const_reference;
 
         typedef typename A::template rebind<pointer>::other B;
+        //const size_type inner_size = 10;    //the size of the "inner arrays"
 
     public:
         // -----------
@@ -146,7 +147,7 @@ class my_deque {
         pointer data_end;                   //the end of the data in the deque
         size_type deque_size;               //the size(number of elements) of the deque
         size_type deque_capacity;           //the max number of elements that deque can store
-        const size_type inner_size = 10;    //the size of the "inner arrays"
+        const size_type static inner_size = 10;    //the size of the "inner arrays"
 
 
     private:
@@ -482,7 +483,7 @@ class my_deque {
                 bool valid () const 
                 {
                     // <your code
-                    return *this.valid();
+                    return true;
                 }
 
             public:
@@ -689,22 +690,22 @@ class my_deque {
         my_deque& operator = (const my_deque& rhs) 
         {
             // <your code>
-            my_deque that(rhs);
-            *this.swap(that);
+            //my_deque that(rhs);
+            ///*this.swap(that);
 
             //swap(that);
 
-            /*if(this == &that)
+            if(this == &rhs)
                 return *this;
             clear();
-            auto b = const_cast<my_deque&>(that).begin();
-            auto e = const_cast<my_deque&>(that).end();
+            auto b = const_cast<my_deque&>(rhs).begin();
+            auto e = const_cast<my_deque&>(rhs).end();
             while(b!=e)
             {
-                push_back(*temp);
-                ++temp;
+                push_back(*b);
+                ++b;
             }
-            */
+            
             assert(valid());
             return *this;
         }
