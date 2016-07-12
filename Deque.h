@@ -26,6 +26,7 @@ using std::rel_ops::operator!=;
 using std::rel_ops::operator<=;
 using std::rel_ops::operator>;
 using std::rel_ops::operator>=;
+using namespace std;
 
 // -------
 // destroy
@@ -104,10 +105,13 @@ class my_deque {
         /**
          * <your documentation>
          */
-        friend bool operator == (const my_deque& lhs, const my_deque& rhs) {
+        friend bool operator == (const my_deque& lhs, const my_deque& rhs) 
+        {
             // <your code>
-            // you must use std::equal()
-            return true;}
+            if(lhs.deque_size != rhs.deque_size)
+                        return false;
+            return std::equal(lhs.begin(),lhs.end(),rhs.begin());
+        }
 
         // ----------
         // operator <
@@ -116,28 +120,47 @@ class my_deque {
         /**
          * <your documentation>
          */
-        friend bool operator < (const my_deque& lhs, const my_deque& rhs) {
+        friend bool operator < (const my_deque& lhs, const my_deque& rhs) 
+        {
             // <your code>
-            // you must use std::lexicographical_compare()
-            return true;}
+            if(lhs.deque_size < rhs.deque_size)
+                return true;
+            if(lhs.deque_size > rhs.deque_size)
+                return false;
+            return std::lexicographical_compare(lhs.begin(),lhs.end(),rhs.begin(),rhs.begin());
+        }
 
     private:
         // ----
         // data
         // ----
 
-        allocator_type _a;
-
+        allocator_type a;
         // <your data>
+        B astar;                            //allocator
+        pointer* outer_begin;               //the very start of the "outer array"
+        pointer* outer_end;                 //the very end of the "outer array"
+        pointer* used_begin;                //the beginning of the used space in the "outer array"
+        pointer* used_end;                  //the end of the used space in the "outer array"
+        pointer data_start;                 //the start of the data in the deque
+        pointer data_end;                   //the end of the data in the deque
+        size_type deque_size;               //the size(number of elements) of the deque
+        size_type deque_capacity;           //the max number of elements that deque can store
+        const size_type inner_size = 10;    //the size of the "inner arrays"
+
 
     private:
         // -----
         // valid
         // -----
 
-        bool valid () const {
+        bool valid () const 
+        {
             // <your code>
-            return true;}
+            return outer_begin <= outer_end &&
+                   deque_capacity >= 0      &&
+                   deque_size >= 0;
+        }
 
     public:
         // --------
@@ -164,9 +187,11 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                friend bool operator == (const iterator& lhs, const iterator& rhs) {
+                friend bool operator == (const iterator& lhs, const iterator& rhs) 
+                {
                     // <your code>
-                    return true;}
+                    return lhs.location == rhs.location;
+                }
 
                 /**
                  * <your documentation>
@@ -200,15 +225,24 @@ class my_deque {
                 // ----
 
                 // <your data>
+                pointer* outer_begin;               //the beginning of the outer array
+                pointer location;                   //the location of the iterator
+                pointer data_end;                   //the end of the data
+
+                size_type outer_location;           //the location of the iterator in terms of the "outer array"
+                size_type inner_location;               //the location of the iterator in terms of the "inner array"
 
             private:
                 // -----
                 // valid
                 // -----
 
-                bool valid () const {
+                bool valid () const 
+                {
                     // <your code>
-                    return true;}
+                    if(outer_begin==0)
+                        return false;
+                }
 
             public:
                 // -----------
@@ -218,9 +252,17 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                iterator (/* <your arguments> */) {
+                iterator (my_deque<T,A> deque):
+                    outer_begin(deque->outer_begin),
+                    location(deque->data_start),
+                    data_end(deque->data_end)
+                {
                     // <your code>
-                    assert(valid());}
+                    outer_location = 0;                                      //starts at the first "index" of "outer array"
+                    //inner_location = inner_size - (location - *outer_begin) -1; 
+                    inner_location = (location - *outer_begin)-1;     
+                    assert(valid());
+                }
 
                 // Default copy, destructor, and copy assignment.
                 // iterator (const iterator&);
@@ -234,11 +276,11 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                reference operator * () const {
+                reference operator * () const 
+                {
                     // <your code>
-                    // dummy is just to be able to compile the skeleton, remove it
-                    static value_type dummy;
-                    return dummy;}
+                   return *location;
+                }
 
                 // -----------
                 // operator ->
@@ -257,10 +299,31 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                iterator& operator ++ () {
+                iterator& operator ++ () 
+                {
                     // <your code>
+                    if(location == data_end -1)         //iterator is at the end of the used data so it has finished iteratoring through the deque
+                    {
+                        ++location;
+                        return *this;
+                    }
+                    if(inner_location <inner_size)
+                    {
+                        ++location;
+                        ++inner_location;
+                        //--inner_location;
+                    }
+                    else
+                    {
+                        ++outer_location;
+                        location = *(outer_begin + outer_location);
+                        inner_location = 0;
+                        //inner_location = inner_size -1;
+                    }
+
                     assert(valid());
-                    return *this;}
+                    return *this;
+                }
 
                 /**
                  * <your documentation>
@@ -278,10 +341,25 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                iterator& operator -- () {
+                iterator& operator -- () 
+                {
                     // <your code>
+                    if(inner_location || location == data_end)
+                    {
+                        --location;
+                        if(location==data_end)
+                            --inner_location;
+                    }
+                    else
+                    {
+                        --outer_location;
+                        location = *(outer_begin + outer_location) + inner_size -1;
+                        inner_location =10;
+
+                    }
                     assert(valid());
-                    return *this;}
+                    return *this;
+                }
 
                 /**
                  * <your documentation>
@@ -299,10 +377,17 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                iterator& operator += (difference_type d) {
+                iterator& operator += (difference_type d) 
+                {
                     // <your code>
+                    while(d)
+                    {
+                        --d;
+                        ++*this;
+                    }
                     assert(valid());
-                    return *this;}
+                    return *this;
+                }
 
                 // -----------
                 // operator -=
@@ -311,10 +396,17 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                iterator& operator -= (difference_type d) {
+                iterator& operator -= (difference_type d) 
+                {
                     // <your code>
+                    while(d)
+                    {
+                        --*this;
+                        --d;
+                    }
                     assert(valid());
-                    return *this;}};
+                    return *this;
+                }};
 
     public:
         // --------------
@@ -341,9 +433,12 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                friend bool operator == (const const_iterator& lhs, const const_iterator& rhs) {
+                friend bool operator == (const const_iterator& lhs, const const_iterator& rhs) 
+                {
                     // <your code>
-                    return true;}
+                    //return const_cast<my_deque*>(lhs) == const_cast<my_deque*>(rhs);
+                    return lhs.normal_iterator == rhs.normal_iterator;
+                }
 
                 /**
                  * <your documentation>
@@ -377,15 +472,18 @@ class my_deque {
                 // ----
 
                 // <your data>
+                my_deque::iterator normal_iterator;
 
             private:
                 // -----
                 // valid
                 // -----
 
-                bool valid () const {
-                    // <your code>
-                    return true;}
+                bool valid () const 
+                {
+                    // <your code
+                    return *this.valid();
+                }
 
             public:
                 // -----------
@@ -395,9 +493,12 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                const_iterator (/* <your arguments> */) {
+                const_iterator (const my_deque* deque):
+                    normal_iterator(const_cast<my_deque*>(deque))
+                {
                     // <your code>
-                    assert(valid());}
+                    assert(valid());
+                }
 
                 // Default copy, destructor, and copy assignment.
                 // const_iterator (const const_iterator&);
@@ -411,11 +512,11 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                reference operator * () const {
+                reference operator * () const 
+                {
                     // <your code>
-                    // dummy is just to be able to compile the skeleton, remove it
-                    static value_type dummy;
-                    return dummy;}
+                    return const_cast<const_reference>(*normal_iterator);
+                }
 
                 // -----------
                 // operator ->
@@ -434,10 +535,13 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                const_iterator& operator ++ () {
+                const_iterator& operator ++ () 
+                {
                     // <your code>
+                    ++normal_iterator;
                     assert(valid());
-                    return *this;}
+                    return *this;
+                }
 
                 /**
                  * <your documentation>
@@ -455,10 +559,13 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                const_iterator& operator -- () {
+                const_iterator& operator -- () 
+                {
                     // <your code>
+                    --normal_iterator;
                     assert(valid());
-                    return *this;}
+                    return *this;
+                }
 
                 /**
                  * <your documentation>
@@ -476,10 +583,13 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                const_iterator& operator += (difference_type) {
+                const_iterator& operator += (difference_type d) 
+                {
                     // <your code>
                     assert(valid());
-                    return *this;}
+                    normal_iterator+=d;
+                    return *this;
+                }
 
                 // -----------
                 // operator -=
@@ -488,10 +598,13 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                const_iterator& operator -= (difference_type) {
+                const_iterator& operator -= (difference_type d) 
+                {
                     // <your code>
                     assert(valid());
-                    return *this;}};
+                    normal_iterator-=d;
+                    return *this;
+                }};
 
     public:
         // ------------
@@ -501,16 +614,44 @@ class my_deque {
         /**
          * <your documentation>
          */
-        explicit my_deque (size_type s = 0, const_reference v = value_type(), const allocator_type& a = allocator_type()) {
+        explicit my_deque (size_type s = 0, const_reference v = value_type(), const allocator_type& a = allocator_type()) 
+        {
             // <your code>
-            assert(valid());}
+            outer_begin = 0;
+            outer_end = 0;
+            used_end = 0;
+            used_begin =0;
+            data_end = 0;
+            data_start = 0;
+            deque_size = 0;
+            deque_capacity = 0;
+            while(s)
+            {
+                push_back(v);
+                --s;
+            }
+            assert(valid());
+        }
 
         /**
          * <your documentation>
          */
-        my_deque (const my_deque& that) {
+        my_deque (const my_deque& that) 
+        {
             // <your code>
-            assert(valid());}
+            deque_capacity = that.capacity();
+            deque_size     = that.size();
+            outer_begin    = that.outer_begin;
+            outer_end      = that.outer_end;
+            used_begin     = that.used_begin;
+            used_end       = that.used_end;
+            data_end       = that.data_end;
+            data_start     = that.data_start;
+
+            //*this = that;
+
+            assert(valid());
+        }
 
         // ----------
         // destructor
@@ -519,9 +660,24 @@ class my_deque {
         /**
          * <your documentation>
          */
-        ~my_deque () {
+        ~my_deque () 
+        {
             // <your code>
-            assert(valid());}
+            this->clear();
+            if(outer_begin != 0)
+            {
+                astar.deallocate(outer_begin,outer_end - outer_begin +1);
+            }
+            outer_begin = 0;
+            outer_end = 0;
+            used_end = 0;
+            used_begin =0;
+            data_end = 0;
+            data_start = 0;
+            deque_size = 0;
+            deque_capacity = 0;
+            assert(valid());
+        }
 
         // ----------
         // operator =
@@ -530,10 +686,28 @@ class my_deque {
         /**
          * <your documentation>
          */
-        my_deque& operator = (const my_deque& rhs) {
+        my_deque& operator = (const my_deque& rhs) 
+        {
             // <your code>
+            my_deque that(rhs);
+            *this.swap(that);
+
+            //swap(that);
+
+            /*if(this == &that)
+                return *this;
+            clear();
+            auto b = const_cast<my_deque&>(that).begin();
+            auto e = const_cast<my_deque&>(that).end();
+            while(b!=e)
+            {
+                push_back(*temp);
+                ++temp;
+            }
+            */
             assert(valid());
-            return *this;}
+            return *this;
+        }
 
         // -----------
         // operator []
@@ -542,11 +716,20 @@ class my_deque {
         /**
          * <your documentation>
          */
-        reference operator [] (size_type index) {
+        reference operator [] (size_type index) 
+        {
             // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            size_type new_index = index +(data_start - *outer_begin);
+            size_type outer_index = new_index / inner_size;
+            size_type inner_index = new_index % inner_size;
+
+            pointer* temp_outer = outer_begin;
+            temp_outer += outer_index;
+            pointer temp_inner = *temp_outer;
+            temp_inner += inner_index;
+            return *temp_inner;
+
+        }
 
         /**
          * <your documentation>
@@ -561,11 +744,21 @@ class my_deque {
         /**
          * <your documentation>
          */
-        reference at (size_type index) {
+        reference at (size_type index) 
+        {
             // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            if((index<0)|| (index > deque_size -1))
+                throw std::out_of_range("out of range");
+            size_type new_index = index +(data_start - *outer_begin);
+            size_type outer_index = new_index / inner_size;
+            size_type inner_index = new_index % inner_size;
+
+            pointer* temp_outer = outer_begin;
+            temp_outer += outer_index;
+            pointer temp_inner = *temp_outer;
+            temp_inner += inner_index;
+            return *temp_inner;;
+        }
 
         /**
          * <your documentation>
@@ -580,11 +773,11 @@ class my_deque {
         /**
          * <your documentation>
          */
-        reference back () {
+        reference back () 
+        {
             // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            return *(data_end-1);
+        }
 
         /**
          * <your documentation>
@@ -599,16 +792,20 @@ class my_deque {
         /**
          * <your documentation>
          */
-        iterator begin () {
+        iterator begin () 
+        {
             // <your code>
-            return iterator(/* <your arguments> */);}
+            return iterator(this);
+        }
 
         /**
          * <your documentation>
          */
-        const_iterator begin () const {
+        const_iterator begin () const 
+        {
             // <your code>
-            return const_iterator(/* <your arguments> */);}
+            return const_iterator(this);
+        }
 
         // -----
         // clear
@@ -617,9 +814,42 @@ class my_deque {
         /**
          * <your documentation>
          */
-        void clear () {
+        void clear () 
+        {
             // <your code>
-            assert(valid());}
+            if(deque_capacity > 0)
+            {
+                pointer* temp_used = used_begin;
+                pointer temp = data_start;
+
+
+                while(data_start != data_end)
+                {
+                    if(temp != data_end)
+                        a.destroy(temp);
+                    if((*temp_used+(inner_size -1))==temp)
+                    {
+                        a.deallocate(*(temp_used),inner_size);
+                        astar.destroy(temp_used);
+                        ++temp_used;
+                        if(temp_used == used_begin)
+                            break;
+                        temp = *temp_used;
+                    }
+                    else
+                    {
+                        ++temp;
+                    }
+                }
+                used_begin  = outer_begin;
+                used_begin += ((deque_capacity/inner_size)/2);
+                used_end = used_begin;
+                data_start=0;
+                data_end=0;
+                deque_size = 0;
+            }
+            assert(valid());
+        }
 
         // -----
         // empty
@@ -638,16 +868,20 @@ class my_deque {
         /**
          * <your documentation>
          */
-        iterator end () {
+        iterator end () 
+        {
             // <your code>
-            return iterator(/* <your arguments> */);}
+            return iterator(this)+=deque_size;
+        }
 
         /**
          * <your documentation>
          */
-        const_iterator end () const {
+        const_iterator end () const 
+        {
             // <your code>
-            return const_iterator(/* <your arguments> */);}
+            return const_iterator(this)+=deque_size;
+        }
 
         // -----
         // erase
@@ -656,10 +890,22 @@ class my_deque {
         /**
          * <your documentation>
          */
-        iterator erase (iterator) {
+        iterator erase (iterator pos) 
+        {
             // <your code>
+            auto pre = pos;
+            auto next = pos++;
+            auto it_end = end();
+            while(next!=it_end)
+            {
+                *pre = *next;
+                ++next;
+                ++pre;
+            }
+            pop_back();
             assert(valid());
-            return iterator();}
+            return --pos;
+        }
 
         // -----
         // front
@@ -668,11 +914,11 @@ class my_deque {
         /**
          * <your documentation>
          */
-        reference front () {
+        reference front () 
+        {
             // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            return *data_start;
+        }
 
         /**
          * <your documentation>
@@ -687,10 +933,25 @@ class my_deque {
         /**
          * <your documentation>
          */
-        iterator insert (iterator, const_reference) {
+        iterator insert (iterator pos, const_reference val) 
+        {
             // <your code>
+            auto pre = pos;
+            auto next = ++pos;
+            auto it_end = end();
+            value_type v;
+            while(next!=it_end)
+            {
+                v = *next;
+                *next = *pre;
+                ++next;
+                ++pre;
+            } 
+            push_back(v);
+            *(--pos) = val;
             assert(valid());
-            return iterator();}
+            return pos;
+        }
 
         // ---
         // pop
@@ -699,16 +960,155 @@ class my_deque {
         /**
          * <your documentation>
          */
-        void pop_back () {
+        void pop_back () 
+        {
             // <your code>
-            assert(valid());}
+            if(data_end != (*(used_end-1)+1))
+            {
+                a.destroy(data_end-1);
+                --data_end;
+                --deque_size;
+            }
+            else
+            {
+                a.destroy(data_end-1);
+                --deque_size;
+                a.deallocate(*used_end, inner_size);
+                astar.destroy(used_end);
+                if(outer_begin != outer_end)
+                {
+                    --used_end;
+                    data_end = *used_end + inner_size;
+                }
+                else
+                {
+                    used_begin = outer_begin;
+                    used_begin += ((deque_capacity/inner_size)/2);
+                    used_end = outer_begin;
+                    data_start = 0;
+                    data_end = 0;
+                    deque_size = 0;
+
+                }
+            }
+            assert(valid());
+        }
 
         /**
          * <your documentation>
          */
-        void pop_front () {
+        void pop_front () 
+        {
             // <your code>
-            assert(valid());}
+            if(data_start != *used_begin + inner_size -1)
+            {
+                a.destroy(data_start);
+                ++data_start;
+                --deque_size;
+            }
+            else
+            {
+                a.destroy(data_start);
+                --deque_size;
+                a.deallocate(*used_begin,inner_size);
+                astar.destroy(used_begin);
+                if(outer_begin != outer_begin)
+                {
+                    ++used_begin;
+                    data_start = *used_begin;
+                    used_begin += ((deque_capacity/inner_size)/2);
+                    used_end = used_begin;
+                    data_start = 0;
+                    data_end = 0;
+                    deque_size = 0;
+                }
+            }
+            assert(valid());
+        }
+
+        //user defined method: outer_resize
+        void outer_resize(bool front)
+        {
+            if(deque_capacity == 0)                 //initial creation of a deque will have a capacity of 0
+            {
+                used_begin = astar.allocate(1);    //using astar allocator to allocate space enough for 1 pointer*
+                astar.construct(used_begin);        //astar constructs a pointer* at location outer_begin
+                outer_begin = used_begin;           //since this is the first "inner array" set outer_begin ... 
+                outer_end = used_begin;             //... and outer_end to used_begin 
+                used_end = outer_begin + 1;
+                data_start = a.allocate(inner_size);//using a allocator to allocate enough space to fit inner_size number of 
+                                                    //pointer and returns the address to data_start
+                *used_begin = data_start;
+                data_start+=inner_size/2;
+                data_end = data_start+1;
+                deque_capacity = inner_size;
+            }
+            else
+            {
+                if(deque_size == 0)                      //capacity is more than 0 but there is currently no elements in the deque (size = 0)
+                {
+                    astar.construct(used_begin);         //use astar to create a pointer* at used_begin 
+                    used_end = used_begin + 1;           //since we have only created 1 pointer* used_end is only 1 unit away from used_begin
+                    data_start = a.allocate(inner_size); //allocates enough space to fit inner_size number of pointers
+                    *used_begin = data_start;            //moves *used_begin to data_start
+                    data_start += inner_size/2;          //moves data_start to the center of space allocated
+                    data_end = data_start + 1;           //sets data_end to 1 unit away from data_start
+                }
+                else
+                {
+                    pointer* new_used_begin;                   //pointer* to the new used_begin                                    
+                    pointer* new_used_end;                     //pointer* to the new used_end
+                    pointer* old_outer_begin = outer_begin;    //creates a pointer that is a copy of outer_begin
+                    pointer* old_outer_end = outer_end;        //creates a pointer that is a copy of outer_end
+
+                    //allocate outer pointers to manage 2x old memory 
+                    new_used_begin = astar.allocate((deque_capacity/inner_size) * 2);
+
+                    //Reset memory block ponters
+                    outer_begin = new_used_begin;                                        
+                    outer_end   = outer_begin + ((deque_capacity/inner_size) * 2) - 1;   
+
+                    new_used_begin += (deque_capacity/inner_size);
+                    new_used_end = new_used_begin;
+
+                    for(pointer* temp_pointer = used_begin; temp_pointer < used_end;++temp_pointer)
+                    {
+                        astar.construct(new_used_end);
+                        *new_used_end = *temp_pointer;
+                        ++new_used_end;
+                    }
+                    pointer* temp_begin = used_begin;
+                    while(temp_begin != used_end)
+                    {
+                        astar.destroy(temp_begin);
+                        ++temp_begin;
+                    }
+                    astar.deallocate(old_outer_begin,(old_outer_end - old_outer_begin +1));
+
+                    used_begin = new_used_begin;
+                    used_end = new_used_end;
+
+                    if(front)
+                    {
+                        astar.construct(--used_begin);
+                        data_start = a.allocate(inner_size);
+                        *used_begin = data_start;
+                        data_start+= (inner_size-1);
+                    }
+                    else
+                    {
+                        astar.construct(used_end);
+                        data_end = a.allocate(inner_size);
+                        *used_end = data_end;
+                        ++used_end;
+                    }
+                    deque_capacity = (((deque_capacity/inner_size)*2)*inner_size);
+
+
+
+                }
+            }   
+        }
 
         // ----
         // push
@@ -717,16 +1117,83 @@ class my_deque {
         /**
          * <your documentation>
          */
-        void push_back (const_reference) {
+        void push_back (const_reference value) 
+        {
             // <your code>
-            assert(valid());}
+            if(used_begin == used_end)
+            {
+                outer_resize(false);
+                a.construct(data_start, value);
+            }
+            else
+            {
+                if((data_end - *(used_end -1)) < inner_size)
+                {
+                    a.construct(data_end,value);
+                    ++data_end;
+                }
+                else
+                {
+                    if((used_end)==(outer_end+1))
+                    {
+                        outer_resize(false);
+                        a.construct(data_end,value);
+                    }
+                    else
+                    {
+                        astar.construct(used_end);
+                        data_end = a.allocate(inner_size);
+                        *outer_end = data_end;
+                        a.construct(data_end,value);
+                        ++data_end;
+                        ++used_end;
+
+                    }
+                }
+            }
+            assert(valid());
+            ++deque_size;
+        }
 
         /**
          * <your documentation>
          */
-        void push_front (const_reference) {
+        void push_front (const_reference value) 
+        {
             // <your code>
-            assert(valid());}
+            if(used_begin == used_end)
+            {
+                outer_resize(false);
+                a.construct(data_start,value);
+            }
+            else
+            {
+                if(data_start - *used_begin >= 1)
+                {
+                    --data_start;
+                    a.construct(data_start,value);
+                }
+                else
+                {
+                    if((used_begin == outer_begin) && (data_start == *used_begin))
+                    {
+                        outer_resize(true);
+                        a.construct(data_start, value);
+                    }
+                    else
+                    {
+                        --used_begin;
+                        astar.construct(used_begin);
+                        data_start = a.allocate(inner_size);
+                        *used_begin = data_start;
+                        data_start+=(inner_size-1);
+                        a.construct(data_start,value);
+                    }
+                }
+            }
+            assert(valid());
+            deque_size++;
+        }
 
         // ------
         // resize
@@ -735,9 +1202,15 @@ class my_deque {
         /**
          * <your documentation>
          */
-        void resize (size_type s, const_reference v = value_type()) {
+        void resize (size_type s, const_reference v = value_type()) 
+        {
             // <your code>
-            assert(valid());}
+            while(deque_size > s)
+                pop_back();
+            while(deque_size < s)
+                push_back(v);
+            assert(valid());
+        }
 
         // ----
         // size
@@ -746,9 +1219,16 @@ class my_deque {
         /**
          * <your documentation>
          */
-        size_type size () const {
+        size_type size () const 
+        {
             // <your code>
-            return 0;}
+            return deque_size;
+        }
+
+        size_type capacity() const
+        {
+            return deque_capacity;
+        }
 
         // ----
         // swap
@@ -757,8 +1237,13 @@ class my_deque {
         /**
          * <your documentation>
          */
-        void swap (my_deque&) {
+        void swap (my_deque& that)
+        {
             // <your code>
-            assert(valid());}};
+            my_deque temp = *this;
+            *this = that;
+            that = temp;
+            assert(valid());
+        }};
 
 #endif // Deque_h
