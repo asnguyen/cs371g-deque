@@ -17,6 +17,7 @@
 #include <memory>    // allocator
 #include <stdexcept> // out_of_range
 #include <utility>   // !=, <=, >, >=
+#include <iostream>
 
 // -----
 // using
@@ -95,7 +96,7 @@ class my_deque {
         typedef typename allocator_type::reference          reference;
         typedef typename allocator_type::const_reference    const_reference;
 
-        typedef typename A::template rebind<pointer>::other B;
+        typedef typename allocator_type::template rebind<pointer>::other B;
         //const size_type inner_size = 10;    //the size of the "inner arrays"
 
     public:
@@ -128,7 +129,7 @@ class my_deque {
                 return true;
             if(lhs.deque_size > rhs.deque_size)
                 return false;
-            return std::lexicographical_compare(lhs.begin(),lhs.end(),rhs.begin(),rhs.begin());
+            return std::lexicographical_compare(lhs.begin(),lhs.end(),rhs.begin(),rhs.end());
         }
 
     private:
@@ -147,7 +148,7 @@ class my_deque {
         pointer data_end;                   //the end of the data in the deque
         size_type deque_size;               //the size(number of elements) of the deque
         size_type deque_capacity;           //the max number of elements that deque can store
-        const size_type static inner_size = 10;    //the size of the "inner arrays"
+        const size_type static inner_size = 5;    //the size of the "inner arrays"
 
 
     private:
@@ -231,7 +232,7 @@ class my_deque {
                 pointer data_end;                   //the end of the data
 
                 size_type outer_location;           //the location of the iterator in terms of the "outer array"
-                size_type inner_location;               //the location of the iterator in terms of the "inner array"
+                size_type inner_location;           //the location of the iterator in terms of the "inner array"
 
             private:
                 // -----
@@ -243,6 +244,7 @@ class my_deque {
                     // <your code>
                     if(outer_begin==0)
                         return false;
+                    return true;
                 }
 
             public:
@@ -253,15 +255,16 @@ class my_deque {
                 /**
                  * <your documentation>
                  */
-                iterator (my_deque<T,A> deque):
-                    outer_begin(deque->outer_begin),
+                //iterator (){}
+                iterator (my_deque<T,A>* deque):
+                    outer_begin(deque->used_begin),
                     location(deque->data_start),
                     data_end(deque->data_end)
                 {
                     // <your code>
                     outer_location = 0;                                      //starts at the first "index" of "outer array"
-                    //inner_location = inner_size - (location - *outer_begin) -1; 
-                    inner_location = (location - *outer_begin)-1;     
+                    inner_location = inner_size - (location - *outer_begin) -1; 
+                    //inner_location = (location - *outer_begin)-1;     
                     assert(valid());
                 }
 
@@ -308,18 +311,18 @@ class my_deque {
                         ++location;
                         return *this;
                     }
-                    if(inner_location <inner_size)
+                    if(inner_location)
                     {
                         ++location;
-                        ++inner_location;
+                        --inner_location;
                         //--inner_location;
                     }
                     else
                     {
                         ++outer_location;
                         location = *(outer_begin + outer_location);
-                        inner_location = 0;
-                        //inner_location = inner_size -1;
+                        //inner_location = 0;
+                        inner_location = inner_size -1;
                     }
 
                     assert(valid());
@@ -345,17 +348,17 @@ class my_deque {
                 iterator& operator -- () 
                 {
                     // <your code>
-                    if(inner_location || location == data_end)
+                    if(inner_size -inner_location || location == data_end)
                     {
                         --location;
                         if(location==data_end)
-                            --inner_location;
+                            ++inner_location;
                     }
                     else
                     {
                         --outer_location;
                         location = *(outer_begin + outer_location) + inner_size -1;
-                        inner_location =10;
+                        inner_location =0;
 
                     }
                     assert(valid());
@@ -631,7 +634,9 @@ class my_deque {
                 push_back(v);
                 --s;
             }
+            //assert(false);
             assert(valid());
+            //assert(false);
         }
 
         /**
@@ -665,10 +670,12 @@ class my_deque {
         {
             // <your code>
             this->clear();
+            //assert(false);
             if(outer_begin != 0)
             {
-                astar.deallocate(outer_begin,outer_end - outer_begin +1);
+                astar.deallocate(outer_begin, outer_end - outer_begin +1);
             }
+            //assert(false);
             outer_begin = 0;
             outer_end = 0;
             used_end = 0;
@@ -678,6 +685,7 @@ class my_deque {
             deque_size = 0;
             deque_capacity = 0;
             assert(valid());
+            //assert(false);
         }
 
         // ----------
@@ -824,23 +832,30 @@ class my_deque {
                 pointer temp = data_start;
 
 
-                while(data_start != data_end)
+                if(!(data_start == data_end))
                 {
-                    if(temp != data_end)
-                        a.destroy(temp);
-                    if((*temp_used+(inner_size -1))==temp)
+                    while(true)
                     {
-                        a.deallocate(*(temp_used),inner_size);
-                        astar.destroy(temp_used);
-                        ++temp_used;
-                        if(temp_used == used_begin)
-                            break;
-                        temp = *temp_used;
+                        if(temp != data_end)
+                            a.destroy(temp);
+                        if((*temp_used+(inner_size -1))==temp)
+                        {
+                            a.deallocate(*(temp_used),inner_size);
+                            astar.destroy(temp_used);
+                            ++temp_used;
+                            if(temp_used == used_end)
+                            {
+                                break;
+                            }
+                            temp = *temp_used;
+                        }
+                        else
+                        {
+                            ++temp;
+                        }
                     }
-                    else
-                    {
-                        ++temp;
-                    }
+                    
+                    
                 }
                 used_begin  = outer_begin;
                 used_begin += ((deque_capacity/inner_size)/2);
@@ -1034,19 +1049,22 @@ class my_deque {
             {
                 used_begin = astar.allocate(1);    //using astar allocator to allocate space enough for 1 pointer*
                 astar.construct(used_begin);        //astar constructs a pointer* at location outer_begin
+                
                 outer_begin = used_begin;           //since this is the first "inner array" set outer_begin ... 
                 outer_end = used_begin;             //... and outer_end to used_begin 
-                used_end = outer_begin + 1;
+                
+                used_end = used_begin + 1;
+                
                 data_start = a.allocate(inner_size);//using a allocator to allocate enough space to fit inner_size number of 
                                                     //pointer and returns the address to data_start
                 *used_begin = data_start;
                 data_start+=inner_size/2;
                 data_end = data_start+1;
                 deque_capacity = inner_size;
+
             }
-            else
-            {
-                if(deque_size == 0)                      //capacity is more than 0 but there is currently no elements in the deque (size = 0)
+            else if(deque_size == 0)
+                //if(deque_size == 0)                      //capacity is more than 0 but there is currently no elements in the deque (size = 0)
                 {
                     astar.construct(used_begin);         //use astar to create a pointer* at used_begin 
                     used_end = used_begin + 1;           //since we have only created 1 pointer* used_end is only 1 unit away from used_begin
@@ -1057,17 +1075,23 @@ class my_deque {
                 }
                 else
                 {
+                    //assert(false);
                     pointer* new_used_begin;                   //pointer* to the new used_begin                                    
                     pointer* new_used_end;                     //pointer* to the new used_end
                     pointer* old_outer_begin = outer_begin;    //creates a pointer that is a copy of outer_begin
                     pointer* old_outer_end = outer_end;        //creates a pointer that is a copy of outer_end
 
-                    //allocate outer pointers to manage 2x old memory 
-                    new_used_begin = astar.allocate((deque_capacity/inner_size) * 2);
+                    //allocate outer pointers to manage 4x old memory 
+                    new_used_begin = astar.allocate((deque_capacity/inner_size) * 4);
+                    //cout << "old used_begin = " << used_begin <<endl;
+                    //cout << "new used_begin = " << new_used_begin << endl; 
+
 
                     //Reset memory block ponters
                     outer_begin = new_used_begin;                                        
-                    outer_end   = outer_begin + ((deque_capacity/inner_size) * 2) - 1;   
+                    outer_end   = outer_begin + ((deque_capacity/inner_size) * 4) -1;  
+
+                    //cout << outer_end - outer_begin<<endl; 
 
                     new_used_begin += (deque_capacity/inner_size);
                     new_used_end = new_used_begin;
@@ -1098,17 +1122,18 @@ class my_deque {
                     }
                     else
                     {
+                        //assert(false);
                         astar.construct(used_end);
                         data_end = a.allocate(inner_size);
                         *used_end = data_end;
                         ++used_end;
                     }
-                    deque_capacity = (((deque_capacity/inner_size)*2)*inner_size);
+                    deque_capacity = (((deque_capacity/inner_size)*4)*inner_size);
 
 
 
                 }
-            }   
+               
         }
 
         // ----
@@ -1128,23 +1153,25 @@ class my_deque {
             }
             else
             {
-                if((data_end - *(used_end -1)) < inner_size)
+                if(static_cast<size_type>((data_end - *(used_end -1))) < inner_size)
                 {
                     a.construct(data_end,value);
                     ++data_end;
                 }
                 else
                 {
+                    //assert(false);
                     if((used_end)==(outer_end+1))
                     {
                         outer_resize(false);
                         a.construct(data_end,value);
+                        ++data_end;
                     }
                     else
                     {
                         astar.construct(used_end);
                         data_end = a.allocate(inner_size);
-                        *outer_end = data_end;
+                        *used_end = data_end;
                         a.construct(data_end,value);
                         ++data_end;
                         ++used_end;
