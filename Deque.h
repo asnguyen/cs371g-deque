@@ -645,16 +645,25 @@ class my_deque {
         my_deque (const my_deque& that) 
         {
             // <your code>
-            deque_capacity = that.capacity();
+            /*deque_capacity = that.capacity();
             deque_size     = that.size();
             outer_begin    = that.outer_begin;
             outer_end      = that.outer_end;
             used_begin     = that.used_begin;
             used_end       = that.used_end;
             data_end       = that.data_end;
-            data_start     = that.data_start;
+            data_start     = that.data_start;*/
+            
+            deque_capacity = 0;
+            deque_size     = 0;
+            outer_begin    = 0;
+            outer_end      = 0;
+            used_begin     = 0;
+            used_end       = 0;
+            data_end       = 0;
+            data_start     = 0;
 
-            //*this = that;
+            *this = that;
 
             assert(valid());
         }
@@ -728,11 +737,11 @@ class my_deque {
         reference operator [] (size_type index) 
         {
             // <your code>
-            size_type new_index = index +(data_start - *outer_begin);
+            size_type new_index = index +(data_start - *used_begin);
             size_type outer_index = new_index / inner_size;
             size_type inner_index = new_index % inner_size;
 
-            pointer* temp_outer = outer_begin;
+            pointer* temp_outer = used_begin;
             temp_outer += outer_index;
             pointer temp_inner = *temp_outer;
             temp_inner += inner_index;
@@ -758,11 +767,11 @@ class my_deque {
             // <your code>
             if((index<0)|| (index > deque_size -1))
                 throw std::out_of_range("out of range");
-            size_type new_index = index +(data_start - *outer_begin);
+            size_type new_index = index +(data_start - *used_begin);
             size_type outer_index = new_index / inner_size;
             size_type inner_index = new_index % inner_size;
 
-            pointer* temp_outer = outer_begin;
+            pointer* temp_outer = used_begin;
             temp_outer += outer_index;
             pointer temp_inner = *temp_outer;
             temp_inner += inner_index;
@@ -979,28 +988,40 @@ class my_deque {
         void pop_back () 
         {
             // <your code>
-            if(data_end != (*(used_end-1)+1))
+            if(static_cast<size_type>(data_end != (*(used_end-1)+1)))
             {
+                //assert(false);
                 a.destroy(data_end-1);
                 --data_end;
                 --deque_size;
             }
             else
             {
+                //assert(false);
+                //cout << used_end << "\n";
+                //cout << data_end << "\n";
+                //cout << *used_end << "\n";
+                //assert(false);
                 a.destroy(data_end-1);
                 --deque_size;
-                a.deallocate(*used_end, inner_size);
+                //cout << used_end << "\n";
+                //cout << *used_end << "\n";
+                
+                a.deallocate(*(used_end-1),inner_size);
+                //assert(false);
                 astar.destroy(used_end);
                 if(outer_begin != outer_end)
                 {
+                    //assert(false);
                     --used_end;
                     data_end = *used_end + inner_size;
                 }
                 else
                 {
+                    //assert(false);
                     used_begin = outer_begin;
                     used_begin += ((deque_capacity/inner_size)/2);
-                    used_end = outer_begin;
+                    used_end = used_begin;
                     data_start = 0;
                     data_end = 0;
                     deque_size = 0;
@@ -1032,6 +1053,10 @@ class my_deque {
                 {
                     ++used_begin;
                     data_start = *used_begin;
+                }
+                else
+                {
+                    used_begin = outer_begin;
                     used_begin += ((deque_capacity/inner_size)/2);
                     used_end = used_begin;
                     data_start = 0;
